@@ -27,8 +27,20 @@ CommandFileNames.forEach((commandPath)=>{
     Commands.push(require(`./commands/${commandPath.name}`));
 })
 
-client.once("ready", async c => {
+client.once("ready", c => {
 	console.log(`準備OKです! ${c.user.tag}がログインします。`);
+});
+
+client.on("messageCreate", async message => {
+    if(message.channelId !== process.env.TOKUMEI_CHANNELID || message.author.id === process.env.APPLICATIONID) return 0;
+    let content = message.content.replaceAll("@silent", "");
+    let attachments_urls = [];
+    message.attachments.each(attachment => attachments_urls.push(attachment.url))
+    //console.log(message.content.indexOf("@silent") )
+    if(message.content == "" && attachments_urls.length == 0) return 0;
+    let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
+    if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
+    await client.channels.cache.get(message.channelId).send(bot_post);
 });
 
 client.on(Events.InteractionCreate, interaction => {
@@ -56,5 +68,18 @@ client.on(Events.InteractionCreate, interaction => {
 });
 
 client.login(TOKEN);
+
+// 死活監視用サーバー
+const http = require("http");
+const port = process.env.PORT || 3000;
+
+const server = http.createServer((request, response) => {
+    response.writeHead(200);
+
+    const responseMessage = "now ON!";
+    response.end(responseMessage);
+});
+
+server.listen(port);
 
 console.log("OK")
