@@ -16,8 +16,6 @@ CommandFileNames.forEach((commandPath)=>{
     Commands.push(require(`./commands/${commandPath.name}`).data.toJSON());
 });
 
-// Discordサーバーにコマンドを登録
-
 (async () => {
     try {
         await rest.put(

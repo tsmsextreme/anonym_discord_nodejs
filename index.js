@@ -1,10 +1,8 @@
 const fs = require('fs')
 const { Client, Events, GatewayIntentBits, Partials} = require('discord.js'); 
-const heyFile = require('./commands/hey.js');
 require('dotenv').config();
 const TOKEN = process.env.TOKEN;
 const SERVERID = process.env.SERVERID;
-const CHANNELID = process.env.CHANNELID;
 
 const client = new Client({	intents: [		
     GatewayIntentBits.Guilds,
