@@ -5,6 +5,7 @@ APPLICATIONID=15415345843545
 HOST=VVVV.VVV.VVVV.VVV
 USERNAME=HUHUHUFHWUHUWH
 PASSWORD=pHUHUHUKHUIO
-DB_URL=mysql://iwjuhuqhwuhwqhuhwquhuwqhuiwqhhusahukdhsjkhxajkdbnjbcxujh/tokumei/wow?ssl={"rejectUnauthorized":true}
+DB_URL=mysql:/iwjuhuqhwuhwqhuhwquhuwqhuiwqhhusahukdhsjkhxajkdbnjbcxujh/tokumei/wow?ssl={"rejectUnauthorized":true}
 DATABASE=GYGYGYIGH
 REQ_NUM=4
+TOKUTEI_NOTIFY_CHANNELID=1130445418545446346

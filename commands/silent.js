@@ -14,24 +14,26 @@ module.exports = {
 				.setDescription('発言(必須)')
 				.setRequired(true)
 		})
-		.addStringOption(option => {
+		/*.addStringOption(option => {
 			return option.setName("channnel")
 				.setDescription("チャンネル指定(既定値:匿名チャンネル)")
 				.addChoices(
 					{ name: '匿名', value: process.env.TOKUMEI_CHANNELID },
 				)
-		}),
+		})*/,
 	execute: async function(interaction) {
 		try {
 			const content = interaction.options.getString("input");
 			const author = interaction.user.username;
 			let Channelid = interaction.options.getString("channel");
 			if(!Channelid) Channelid = default_Channelid;
-			const sent = await interaction.guild.channels.cache.get(Channelid).send(content);
+			const sent = await interaction.guild.channels.cache.get(Channelid).send(`>>> ${content}`);
 			let messageId = sent.id;
-			let nowtime = new Date(sent.createdTimestamp).toLocaleString('ja-JP');
+			let nowDate = new Date(sent.createdTimestamp);
+			nowDate.setHours(nowDate.getHours()+9);
+			nowtime = nowDate.toLocaleString('ja-JP');
 			const connection = mysql.createConnection(process.env.DBURL)
-			await connection.connect((err) => {
+			connection.connect((err) => {
 				if (err) throw err;
 				const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
 				connection.execute(sql,[messageId, author, content, nowtime], (err)=>{
