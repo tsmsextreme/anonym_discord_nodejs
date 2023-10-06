@@ -29,7 +29,7 @@ module.exports = {
 			if(!Channelid) Channelid = default_Channelid;
 			const sent = await interaction.guild.channels.cache.get(Channelid).send(content);
 			let messageId = sent.id;
-			let nowtime = new Date().toLocaleString('ja-JP');
+			let nowtime = new Date(sent.createdTimestamp).toLocaleString('ja-JP');
 			const connection = mysql.createConnection(process.env.DBURL)
 			await connection.connect((err) => {
 				if (err) throw err;
