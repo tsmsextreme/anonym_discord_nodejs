@@ -20,7 +20,7 @@ module.exports = {
             await interaction.guild.channels.fetch(process.env.TOKUMEI_CHANNELID)
                 .then(channel => channel.messages.fetch(message_id)
                     .then(message => message.delete()));
-            await interaction.reply(">>> あぼーんしたので")
+            await interaction.reply({ content: `>>> あぼーんしたので`, ephemeral: true })
 		} catch (err) {
 			console.error(err)
 			await interaction.reply({ content: `>>> エラーです！すみません！内容:${err}`, ephemeral: true })
