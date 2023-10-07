@@ -24,11 +24,16 @@ module.exports = {
 				let sql = "SELECT * FROM logs WHERE message_id = ?;"
 				connection.execute(sql,[message_id], (err, results)=>{
 					if(err) throw err;
+					if(results.length < 1){
+						interaction.reply({ content: ">>> 存在しないメッセージidです", ephemeral: true })
+						connection.end();
+						return 0;
+					}
 					let message = results[0];
 					let moderator_list_ = message.moderator ? message.moderator.split(",") : [];
 					if(moderator_list_.includes(interaction.user.username)){
 						interaction.reply({ embeds : [{
-							title: "/特定しますた　🧨発動",
+							title: "/特定しますた　⚠️警告",
 							discription: "__あなたはすでに特定ポイントを追加しています__",
 							color: 0x00bfff,
 							fields: [
@@ -43,8 +48,11 @@ module.exports = {
 							{
 								name: "累計特定Pt",
 								value: moderator_list_.length
+							}],
+							footer: {
+								text: "made by willoh"
 							}
-						]}], ephemeral: true });
+						}], ephemeral: true });
 						return 0;
 					}
 
@@ -67,8 +75,10 @@ module.exports = {
 						{
 							name: "累計特定Pt",
 							value: moderator_list_.length
-						}
-					]}], ephemeral: true });
+						}],
+						footer: {
+							text: "made by willoh"
+					}}], ephemeral: true });
 					connection.end();
 					
 					if(moderator_list_.length < req_num) return 0;
@@ -88,8 +98,10 @@ module.exports = {
 						{
 							name: "送信者",
 							value: `||${message.author}||`
-						}
-					]}]});
+						}],							
+						footer: {
+						text: "made by willoh"
+					}}]});
 				})
 				
 			});
