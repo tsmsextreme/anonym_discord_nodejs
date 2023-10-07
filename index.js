@@ -37,6 +37,7 @@ client.on("messageCreate", async message => {
     let attachments_urls = [];
     message.attachments.each(attachment => attachments_urls.push(attachment.url))
     //console.log(message.content.indexOf("@silent") )
+    await message.delete();
     if(message.content == "" && attachments_urls.length == 0) return 0;
     let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
     if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
