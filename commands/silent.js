@@ -24,6 +24,7 @@ module.exports = {
 	execute: async function(interaction) {
 		try {
 			const content = interaction.options.getString("input");
+			console.log(interaction);
 			const author = interaction.user.username;
 			let Channelid = interaction.options.getString("channel");
 			if(!Channelid) Channelid = default_Channelid;

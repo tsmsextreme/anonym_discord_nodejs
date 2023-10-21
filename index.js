@@ -4,22 +4,34 @@ require('dotenv').config();
 const TOKEN = process.env.TOKEN;
 
 const client = new Client({	intents: [		
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.DirectMessageReactions,
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildBans,
+    GatewayIntentBits.GuildEmojisAndStickers,
     GatewayIntentBits.GuildIntegrations,
-    GatewayIntentBits.GuildPresences,
-    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildScheduledEvents,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildWebhooks,
+    GatewayIntentBits.Guilds,
     GatewayIntentBits.MessageContent],
 partials: [
-    Partials.User,
     Partials.Channel,
     Partials.GuildMember,
+    Partials.GuildScheduledEvent,
     Partials.Message,
     Partials.Reaction,
     Partials.ThreadMember,
+    Partials.User
 ]});
+
+
 
 let Commands = [];
 let CommandFileNames = fs.readdirSync("./commands", {withFileTypes: true});
@@ -28,7 +40,17 @@ CommandFileNames.forEach((commandPath)=>{
 })
 
 client.once("ready", c => {
-	console.log(`準備OKです! ${c.user.tag}がログインします。`);
+    // ゴミコマンドお掃除
+    
+    // client.guilds.fetch(process.env.SERVERID).then((guild)=>{
+    //     guild.commands.fetch().then(console.log).catch(console.error);
+    //     guild.commands.set([])
+    //     .then(console.log)
+    //     .catch(console.error);
+    // });
+    
+    
+    console.log(`準備OKです! ${c.user.tag}がログインします。`);
 });
 
 client.on("messageCreate", async message => {
