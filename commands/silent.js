@@ -28,11 +28,13 @@ module.exports = {
 			const author = interaction.user.username;
 			let Channelid = interaction.options.getString("channel");
 			if(!Channelid) Channelid = default_Channelid;
+
 			const sent = await interaction.guild.channels.cache.get(Channelid).send(`>>> ${content}`);
 			let messageId = sent.id;
 			let nowDate = new Date(sent.createdTimestamp);
-			nowDate.setHours(nowDate.getHours()+9);
+			//nowDate.setHours(nowDate.getHours()+9);
 			nowtime = nowDate.toLocaleString('ja-JP');
+
 			const connection = mysql.createConnection(process.env.DBURL)
 			connection.connect((err) => {
 				if (err) throw err;

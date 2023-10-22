@@ -5,3 +5,5 @@ APPLICATIONID=15415345843545
 DB_URL=mysql:/iwjuhuqhwuhwqhuhwquhuwqhuiwqhhusahukdhsjkhxajkdbnjbcxujh/tokumei/wow?ssl={"rejectUnauthorized":true}
 REQ_NUM=4
 TOKUTEI_NOTIFY_CHANNELID=1130445418545446346
+DELETE_COMMAND=0 //discord.py版から移行するとき、これと
+UPDATE_MESSAGEID=0 //これを1にしてnpm run startして、その後に0に戻して起動してください。

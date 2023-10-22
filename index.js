@@ -40,15 +40,42 @@ CommandFileNames.forEach((commandPath)=>{
 })
 
 client.once("ready", c => {
-    // ゴミコマンドお掃除
-    
-    // client.guilds.fetch(process.env.SERVERID).then((guild)=>{
-    //     guild.commands.fetch().then(console.log).catch(console.error);
-    //     guild.commands.set([])
-    //     .then(console.log)
-    //     .catch(console.error);
-    // });
-    
+    if(parseInt(process.env.DELETE_COMMAND)){
+        client.guilds.fetch(process.env.SERVERID).then((guild)=>{
+            guild.commands.fetch().then(console.log).catch(console.error);
+            guild.commands.set([])
+            .then(console.log)
+            .catch(console.error);
+        });
+    }
+    if(parseInt(process.env.UPDATE_MESSAGEID)){
+        const mysql = require('mysql2');
+        const connection = mysql.createConnection(process.env.DBURL);
+        (async()=>{
+            const channel = client.channels.cache.get(process.env.TOKUMEI_CHANNELID);
+            let message = await channel.messages
+              .fetch({ limit: 1 })
+              .then(messagePage => (messagePage.size === 1 ? messagePage.at(0) : null));
+            while (message) {
+              await channel.messages
+                .fetch({ limit: 100, before: message.id })
+                .then(messagePage => {
+                    messagePage.forEach(msg => {
+                        
+                        let message_create_at_JST_date = new Date(msg.createdTimestamp);
+                        let message_create_at_JST = message_create_at_JST_date.toLocaleString('ja-JP')
+                        connection.connect(() => {
+                            const sql = `UPDATE logs SET message_id = ${msg.id} WHERE time <= '${message_create_at_JST}' ORDER BY time DESC LIMIT 1;`
+                            console.log(sql, msg.content);
+                            connection.query(sql)
+                        });
+                    });
+                  message = 0 < messagePage.size ? messagePage.at(messagePage.size - 1) : null;
+                });
+            }
+        })();
+        
+    }
     
     console.log(`準備OKです! ${c.user.tag}がログインします。`);
 });
