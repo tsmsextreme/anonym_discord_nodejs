@@ -89,7 +89,7 @@ client.on("messageCreate", async message => {
     if(message.content == "" && attachments_urls.length == 0) return 0;
     let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
     if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
-    await client.channels.cache.get(message.channelId).send(bot_post);
+    const rep = await client.channels.cache.get(message.channelId).send(bot_post);
     let nowDate = new Date(message.createdTimestamp);
     //nowDate.setHours(nowDate.getHours()+9);
     nowtime = nowDate.toLocaleString('ja-JP');
@@ -97,7 +97,7 @@ client.on("messageCreate", async message => {
     connection.connect((err) => {
         if (err) throw err;
         const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
-        connection.execute(sql,[message.id, message.author, bot_post, nowtime], (err)=>{
+        connection.execute(sql,[rep.id, message.author, bot_post, nowtime], (err)=>{
             if(err) throw err;
         })
         connection.end();
