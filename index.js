@@ -90,7 +90,7 @@ client.on("messageCreate", async message => {
     let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
     if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
     await client.channels.cache.get(message.channelId).send(bot_post);
-    let nowDate = new Date(sent.createdTimestamp);
+    let nowDate = new Date(message.createdTimestamp);
     //nowDate.setHours(nowDate.getHours()+9);
     nowtime = nowDate.toLocaleString('ja-JP');
     const connection = mysql.createConnection(process.env.DBURL)
