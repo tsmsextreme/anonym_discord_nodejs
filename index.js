@@ -97,7 +97,7 @@ client.on("messageCreate", async message => {
     connection.connect((err) => {
         if (err) throw err;
         const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
-        connection.execute(sql,[message.id, message.user.username, bot_post, nowtime], (err)=>{
+        connection.execute(sql,[message.id, message.author, bot_post, nowtime], (err)=>{
             if(err) throw err;
         })
         connection.end();
