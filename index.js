@@ -89,7 +89,9 @@ client.on("messageCreate", async message => {
     let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
     if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
     await client.channels.cache.get(message.channelId).send(bot_post);
-    await message.delete();
+    message.delete()
+        .then(() => console.log("削除完了"))
+        .catch(() => console.log("削除済"));
 });
 
 client.on(Events.InteractionCreate, interaction => {
