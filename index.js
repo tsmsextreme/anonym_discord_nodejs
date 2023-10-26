@@ -82,33 +82,34 @@ client.once("ready", c => {
 });
 
 client.on("messageCreate", async message => {
+
     if(message.channelId !== process.env.TOKUMEI_CHANNELID || message.author.id === process.env.APPLICATIONID) return 0;
-    let content = message.content.replaceAll("@silent", "");
-    let attachments_urls = [];
-    message.attachments.each(attachment => attachments_urls.push(attachment.url))
-    if(message.content == "" && attachments_urls.length == 0) return 0;
-    let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
-    if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
-    const rep = await client.channels.cache.get(message.channelId).send(bot_post);
-    let nowDate = new Date(message.createdTimestamp);
-    //nowDate.setHours(nowDate.getHours()+9);
-    nowtime = nowDate.toLocaleString('ja-JP');
-    const connection = mysql.createConnection(process.env.DBURL)
-    connection.connect((err) => {
-        if (err) throw err;
-        const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
-        connection.execute(sql,[rep.id, message.author.username, bot_post, nowtime], (err)=>{
-            if(err) throw err;
-        })
-        connection.end();
-    });
-    console.log(message,process.env.APPLICATIONID);
-    
-    setTimeout(() => {
-        message.delete()
-        .then((deleteMessage) => console.log("削除することが出来ました"))
-        .catch((error) => console.log("こちらのメッセージは既に削除されていました。"));
-    }, 1000);
+    const message_copy = structuredClone(message);
+    console.log(message_copy,message)
+    message.delete()
+    .then(async (deleteMessage) => {
+        let content = message_copy.content.replaceAll("@silent", "");
+        let attachments_urls = [];
+        message_copy.attachments.forEach(attachment => attachments_urls.push(attachment.url))
+        if(message_copy.content == "" && attachments_urls.length == 0) return 0;
+        let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
+        if(message_copy.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
+        const rep = await client.channels.cache.get(message_copy.channelId).send(bot_post);
+        let nowDate = new Date(message_copy.createdTimestamp);
+        nowDate.setHours(nowDate.getHours()+9);
+        nowtime = nowDate.toLocaleString('ja-JP');
+        const connection = mysql.createConnection(process.env.DBURL)
+        connection.connect((err) => {
+            if (err) throw err;
+            const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
+            connection.execute(sql,[rep.id, message_copy.author.username, bot_post, nowtime], (err)=>{
+                if(err) throw err;
+            })
+            connection.end();
+        });
+        console.log(message_copy.author.username,process.env.APPLICATIONID);
+    }).catch((error) => console.log("こちらのメッセージは既に削除されていました。", error));
+
 });
 
 client.on(Events.InteractionCreate, interaction => {
