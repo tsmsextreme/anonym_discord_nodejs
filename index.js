@@ -107,7 +107,7 @@ client.on("messageCreate", async message => {
             })
             connection.end();
         });
-        console.log(message_copy.author.username,process.env.APPLICATIONID);
+        console.log(rep);
     }).catch((error) => console.log("こちらのメッセージは既に削除されていました。", error));
 
 });
