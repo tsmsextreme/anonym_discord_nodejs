@@ -85,11 +85,11 @@ client.on("messageCreate", async message => {
     let content = message.content.replaceAll("@silent", "");
     let attachments_urls = [];
     message.attachments.each(attachment => attachments_urls.push(attachment.url))
-    await message.delete();
     if(message.content == "" && attachments_urls.length == 0) return 0;
     let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
     if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
     await client.channels.cache.get(message.channelId).send(bot_post);
+    await message.delete();
 });
 
 client.on(Events.InteractionCreate, interaction => {
