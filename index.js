@@ -2,6 +2,7 @@ const fs = require('fs')
 const { Client, Events, GatewayIntentBits, Partials} = require('discord.js'); 
 require('dotenv').config();
 const TOKEN = process.env.TOKEN;
+const mysql = require('mysql2')
 
 const client = new Client({	intents: [		
     GatewayIntentBits.DirectMessageReactions,
@@ -89,10 +90,25 @@ client.on("messageCreate", async message => {
     let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
     if(message.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
     await client.channels.cache.get(message.channelId).send(bot_post);
+    let nowDate = new Date(sent.createdTimestamp);
+    //nowDate.setHours(nowDate.getHours()+9);
+    nowtime = nowDate.toLocaleString('ja-JP');
+    const connection = mysql.createConnection(process.env.DBURL)
+    connection.connect((err) => {
+        if (err) throw err;
+        const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
+        connection.execute(sql,[message.id, message.user.username, bot_post, nowtime], (err)=>{
+            if(err) throw err;
+        })
+        connection.end();
+    });
     console.log(message,process.env.APPLICATIONID);
-    message.delete()
-        .then(() => console.log("削除完了"))
-        .catch(() => console.log("削除済"));
+    
+    setTimeout(() => {
+        message.delete()
+        .then((deleteMessage) => console.log("削除することが出来ました"))
+        .catch((error) => console.log("こちらのメッセージは既に削除されていました。"));
+    }, 1000);
 });
 
 client.on(Events.InteractionCreate, interaction => {
