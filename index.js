@@ -83,7 +83,9 @@ client.once("ready", c => {
 
 client.on("messageCreate", async message => {
 
-    if(message.channelId !== process.env.TOKUMEI_CHANNELID || message.author.id === process.env.APPLICATIONID) return 0;
+    if( message.channelId !== process.env.TOKUMEI_CHANNELID || 
+        message.author.bot ||
+        message.author.id === process.env.APPLICATIONID) return 0;
     const message_copy = structuredClone(message);
     console.log(message_copy,message)
     message.delete()
@@ -94,7 +96,7 @@ client.on("messageCreate", async message => {
         if(message_copy.content == "" && attachments_urls.length == 0) return 0;
         let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
         if(message_copy.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
-        const rep = await client.channels.cache.get(message_copy.channelId).send(bot_post);
+        const sent = await client.channels.cache.get(message_copy.channelId).send(bot_post);
         let nowDate = new Date(message_copy.createdTimestamp);
         nowDate.setHours(nowDate.getHours()+9);
         nowtime = nowDate.toLocaleString('ja-JP');
@@ -102,12 +104,12 @@ client.on("messageCreate", async message => {
         connection.connect((err) => {
             if (err) throw err;
             const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
-            connection.execute(sql,[rep.id, message_copy.author.username, bot_post, nowtime], (err)=>{
+            connection.execute(sql,[sent.id, message_copy.author.username, bot_post, nowtime], (err)=>{
                 if(err) throw err;
             })
             connection.end();
         });
-        console.log(rep);
+        console.log(sent,[sent.id, message_copy.author.username, bot_post, nowtime]);
     }).catch((error) => console.log("こちらのメッセージは既に削除されていました。", error));
 
 });
