@@ -31,7 +31,7 @@ module.exports = {
 
 		try {
 			const content = interaction.options.getString("input");
-			console.log(interaction);
+			//console.log(interaction);
 			const author = interaction.user.username;
 			let Channelid = interaction.options.getString("channel");
 			if (!Channelid) Channelid = default_Channelid;
@@ -41,11 +41,11 @@ module.exports = {
 			let nowDate = new Date(sent.createdTimestamp);
 			//nowDate.setHours(nowDate.getHours()+9);
 			nowtime = nowDate.toLocaleString('ja-JP');
-
+			console.log(sql, messageId, author, content.replace(/\n/g, '\\n'), nowtime)
 			const sql = "INSERT INTO logs VALUES($1, $2, $3, $4, NULL)"
 			await pgclient.query(sql, [messageId, author, content.replace(/\n/g, '\\n'), nowtime])
 			// チンポ大回転
-
+			console.log("Success!")
 			await interaction.reply({ content: '>>> 送信済 すぐにこのメッセージは消えます', ephemeral: true });
 			await interaction.deleteReply();
 		} catch (err) {
