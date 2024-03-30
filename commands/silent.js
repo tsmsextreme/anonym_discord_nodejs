@@ -41,8 +41,8 @@ module.exports = {
 			let nowDate = new Date(sent.createdTimestamp);
 			//nowDate.setHours(nowDate.getHours()+9);
 			nowtime = nowDate.toLocaleString('ja-JP');
-			const sql = "INSERT INTO logs (message_id, author, content, time, moderator) VALUES ($1, $2, $3, $4, NULL);"
-			console.log("a", sql, messageId, author, content.replace(/\n/g, '\\n'), nowtime)
+			const sql = "INSERT INTO logs (message_id, author, content, time, moderator) VALUES ($1, '$2', '$3', '$4', NULL);"
+			console.log("b", sql, messageId, author, content.replace(/\n/g, '\\n'), nowtime)
 
 			await pgclient.query(sql, [messageId, author, content.replace(/\n/g, '\\n'), nowtime])
 			// チンポ大回転
