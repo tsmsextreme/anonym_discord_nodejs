@@ -1,15 +1,14 @@
 const { SlashCommandBuilder } = require('discord.js');
 require('dotenv').config();
 const default_Channelid = process.env.TOKUMEI_CHANNELID;
-const mysql = require('mysql2')
+const { Client } = require('pg')
 
 
-// 以下の形式にすることで、他のファイルでインポートして使用できるようになります。
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('silent')
 		.setDescription('@silentしなくてもいいし入力中も出ないしどのチャンネルからでも匿名に書き込めるかわりにファイル添付はできないコマンド')
-		.addStringOption(option =>{
+		.addStringOption(option => {
 			return option.setName('input')
 				.setDescription('発言(必須)')
 				.setRequired(true)
@@ -21,13 +20,21 @@ module.exports = {
 					{ name: '匿名', value: process.env.TOKUMEI_CHANNELID },
 				)
 		})*/,
-	execute: async function(interaction) {
+	execute: async function (interaction) {
+		const pgclient = new Client({
+			connectionString: process.env.DBURL,
+			ssl: {
+				rejectUnauthorized: false
+			}
+		})
+		pgclient.connect()
+
 		try {
 			const content = interaction.options.getString("input");
 			console.log(interaction);
 			const author = interaction.user.username;
 			let Channelid = interaction.options.getString("channel");
-			if(!Channelid) Channelid = default_Channelid;
+			if (!Channelid) Channelid = default_Channelid;
 
 			const sent = await interaction.guild.channels.cache.get(Channelid).send(`>>> ${content}`);
 			let messageId = sent.id;
@@ -35,20 +42,17 @@ module.exports = {
 			//nowDate.setHours(nowDate.getHours()+9);
 			nowtime = nowDate.toLocaleString('ja-JP');
 
-			const connection = mysql.createConnection(process.env.DBURL)
-			connection.connect((err) => {
-				if (err) throw err;
-				const sql = "INSERT INTO logs values(?, ?, ?, ?, NULL)"
-				connection.execute(sql,[messageId, author, content, nowtime], (err)=>{
-					if(err) throw err;
-				})
-				connection.end();
-			});
+			const sql = "INSERT INTO logs VALUES($1, $2, $3, $4, NULL)"
+			await pgclient.query(sql, [messageId, author, content.replace(/\n/g, '\\n'), nowtime])
+			// チンポ大回転
+
 			await interaction.reply({ content: '>>> 送信済 すぐにこのメッセージは消えます', ephemeral: true });
 			await interaction.deleteReply();
 		} catch (err) {
 			console.error(err)
 			await interaction.reply({ content: `>>> エラーです！すみません！内容:${err}`, ephemeral: true })
 		}
-	},
+
+		pgclient.end()
+	}
 };
