@@ -1,5 +1,5 @@
 # 環境
-- planetscale
+- [neon](https://neon.tech)
 - node.js (v18以降)
 
 # 注意

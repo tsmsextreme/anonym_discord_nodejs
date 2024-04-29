@@ -109,12 +109,11 @@ client.on("messageCreate", async message => {
             let bot_post = `>>> ${content} ${attachments_urls.join("\n")}`;
             if (message_copy.content == "") bot_post = `>>> ${attachments_urls.join("\n")}`
             const sent = await client.channels.cache.get(message_copy.channelId).send(bot_post);
-            let nowDate = new Date(message_copy.createdTimestamp);
-            nowDate.setHours(nowDate.getHours() + 9);
-            nowtime = nowDate.toLocaleString('ja-JP');
+			let nowDate = new Date(sent.createdTimestamp)
+			nowDate.setHours(nowDate.getHours()+9)
             const sql = "INSERT INTO logs VALUES($1, $2, $3, $4, NULL)"
-            await pgclient.query(sql, [sent.id, message_copy.author.username, bot_post.replace(/\n/g, '\\n'), nowtime])
-            // await pgclient.query(sql, [sent.id, message_copy.author.username, bot_post.replace(/\n/g, '\\n'), nowtime], (err) => {
+            await pgclient.query(sql, [sent.id, message_copy.author.username, bot_post.replace(/\n/g, '\\n'), nowDate])
+            // await pgclient.query(sql, [sent.id, message_copy.author.username, bot_post.replace(/\n/g, '\\n'), nowDate], (err) => {
             //     console.log("sql debugger = " + err)
             //     if (err) {
             //         console.error("sql debugger = " + err)
