@@ -38,13 +38,15 @@ module.exports = {
 
 			const sent = await interaction.guild.channels.cache.get(Channelid).send(`>>> ${content}`);
 			let messageId = sent.id;
-			let nowDate = new Date(sent.createdTimestamp);
-			//nowDate.setHours(nowDate.getHours()+9);
-			nowtime = nowDate.toLocaleString('ja-JP');
-			const sql = "INSERT INTO logs (message_id, author, content, time, moderator) VALUES ($1, $2, $3, $4, NULL);"
-			console.log("b", sql, messageId, author, content.replace(/\n/g, '\\n'), nowtime)
-
-			await pgclient.query(sql, [messageId, author, content.replace(/\n/g, '\\n'), nowtime])
+      
+      let nowDate = new Date(sent.createdTimestamp)
+      nowDate.setHours(nowDate.getHours()+9)
+      
+      const sql = "INSERT INTO logs (message_id, author, content, time, moderator) VALUES ($1, $2, $3, $4, NULL);"
+      console.log("b", sql, messageId, author, content.replace(/\n/g, '\\n'), nowtime)
+      await pgclient.query(sql, [messageId, author, content.replace(/\n/g, '\\n'), nowDate])
+      
+      
 			// チンポ大回転
 			console.log("Success!")
 			await interaction.reply({ content: '>>> 送信済 すぐにこのメッセージは消えます', ephemeral: true });
